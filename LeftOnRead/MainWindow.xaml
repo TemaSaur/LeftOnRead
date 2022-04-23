@@ -6,7 +6,28 @@
         xmlns:local="clr-namespace:LeftOnRead"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+    <Canvas
+        Name="MainCanvas"
+        Background="#100220"
+        Focusable="True"
+        KeyDown="KeyIsDown"
+        KeyUp="KeyIsUp"
+        >
+        <Rectangle
+            Name="HAHAHA"
+            Width="40"
+            Height="40"
+            Canvas.Left="100"
+            Canvas.Top="100"
+            Fill="#fff"
+            />
+        <Border
+            Width="120"
+            Height="25"
+            Canvas.Left="60"
+            Canvas.Top="140"
+            Background="LightBlue"
+            CornerRadius="10"
+            Tag="Platform"/>
+    </Canvas>
 </Window>
