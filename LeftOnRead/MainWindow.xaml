@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LeftOnRead"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="800">
     <Canvas
         Name="MainCanvas"
         Background="#100220"
@@ -14,7 +14,7 @@
         KeyUp="KeyIsUp"
         >
         <Rectangle
-            Name="HAHAHA"
+            Name="BoxElement"
             Width="40"
             Height="40"
             Canvas.Left="100"
@@ -25,9 +25,17 @@
             Width="120"
             Height="25"
             Canvas.Left="60"
-            Canvas.Top="140"
+            Canvas.Top="145"
             Background="LightBlue"
             CornerRadius="10"
             Tag="Platform"/>
+        <Border
+            Width="120"
+            Height="25"
+            Canvas.Left="300"
+            Canvas.Top="400"
+            Background="LightBlue"
+            CornerRadius="10"
+            Tag="Platform2"/>
     </Canvas>
 </Window>
