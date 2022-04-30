@@ -21,18 +21,16 @@ namespace LeftOnRead
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		DispatcherTimer timer = new DispatcherTimer();
-		// int gravity = 9;
-		// Rect box;
+		private readonly DispatcherTimer _timer = new DispatcherTimer();
 		private Box _player;
-		private Platform[] platforms;
+		private readonly Platform[] _platforms;
 
 		public MainWindow()
 		{
 			InitializeComponent();
-			timer.Tick += MainEventTimer;
-			timer.Interval = TimeSpan.FromMilliseconds(20);
-			platforms = GetPlatforms()
+			_timer.Tick += MainEventTimer;
+			_timer.Interval = TimeSpan.FromMilliseconds(20);
+			_platforms = GetPlatforms()
 				.Select(e => new Platform((int) Canvas.GetLeft(e), (int) Canvas.GetTop(e)))
 				.ToArray();
 			
@@ -41,17 +39,15 @@ namespace LeftOnRead
 
 
 		private void MainEventTimer(object sender, EventArgs args) {
-			// box = new Rect(Canvas.GetLeft(BoxElement), Canvas.GetTop(BoxElement), BoxElement.Width, BoxElement.Height);
-
 			Canvas.SetTop(BoxElement, _player.Y);
 			Canvas.SetLeft(BoxElement, _player.X);
 			_player.UpdatePosition();
 
-			foreach (var p in platforms)
+			foreach (var p in _platforms)
 			{
 				if (p.IsColliding(_player))
 				{
-					_player.NoMoveDown(p);
+					_player.StopFalling(p);
 				}
 			}
 		}
@@ -65,7 +61,7 @@ namespace LeftOnRead
 			Canvas.SetTop(BoxElement, _player.Y);
 			Canvas.SetLeft(BoxElement, _player.X);
 
-			timer.Start();
+			_timer.Start();
 		}
 
 		private IEnumerable<Border> GetPlatforms()
@@ -77,30 +73,22 @@ namespace LeftOnRead
 		private void KeyIsUp(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.A)
-			{
 				_player.StopMovingLeft();
-			}
+			
 			if (e.Key == Key.D)
-			{
 				_player.StopMovingRight();
-			}
 		}
 
 		private void KeyIsDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.A)
-			{
 				_player.MoveLeft();
-			}
+			
 			if (e.Key == Key.D)
-			{
 				_player.MoveRight();
-			}
 			
 			if (e.Key == Key.Space)
-			{
 				_player.Jump();
-			}
 		}
 	}
 }

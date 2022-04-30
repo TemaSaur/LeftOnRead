@@ -12,16 +12,24 @@ namespace LeftOnRead
 
 		private Vector _velocity;
 		private const double Gravity = 2;
-		private double g = Gravity;
-		private const double JumpSize = 30;
+		private double _verticalAcceleration = Gravity;
+		private const double JumpAcceleration = 30;
+		private const double MaximumVerticalVelocity = 91;
 		private const double MaximumSideVelocity = 10;
-		private const double SideVelocityInc = 0.6;
-		private const double SideVelocityDec = 1.9;
+		private const double SideVelocityInc = 1.4;
+		private const double SideVelocityDec = 2.6;
 
-		private bool _currentlyColliding = false;
+		private bool _standing;
 		private Platform _currentCollider;
 		
-		private int _direction = 0;
+		private Direction _direction;
+
+		private enum Direction
+		{
+			Left,
+			None,
+			Right
+		}
 
 		public Box()
 		{
@@ -36,17 +44,26 @@ namespace LeftOnRead
 			X += (int)_velocity.X;
 			Y += (int)_velocity.Y;
 
-			if (_currentlyColliding)
-			{
-				if (X > _currentCollider.X + Platform.Width || X - Width < _currentCollider.X)
-				{
-					_currentlyColliding = false;
-					_currentCollider = null;
-					g = Gravity;
-				}
-			}
+			if (_standing && OverVoid())
+					Fall();
 
-			if (_direction == 0)
+			// dev only
+			if (Y > 800)
+				Y = -50;
+
+			HandleSideMovement();
+
+			HandleVerticalMovement();
+		}
+
+		private void HandleVerticalMovement()
+		{
+			_velocity.Y = Math.Min(_velocity.Y + _verticalAcceleration, MaximumVerticalVelocity);
+		}
+
+		private void HandleSideMovement()
+		{
+			if (_direction == Direction.None)
 			{
 				if (_velocity.X > 1e-4)
 					_velocity.X = Math.Max(0, _velocity.X - SideVelocityDec);
@@ -54,56 +71,66 @@ namespace LeftOnRead
 				if (_velocity.X < -1e-4)
 					_velocity.X = Math.Min(0, _velocity.X + SideVelocityDec);
 			}
-			else if (_direction == 1)
-			{
-				_velocity.X = Math.Min(MaximumSideVelocity, _velocity.X + SideVelocityInc);
-			}
-			else
+
+			if (_direction == Direction.Left)
 			{
 				_velocity.X = Math.Max(-MaximumSideVelocity, _velocity.X - SideVelocityInc);
 			}
-			_velocity.Y += g;
+
+			if (_direction == Direction.Right)
+			{
+				_velocity.X = Math.Min(MaximumSideVelocity, _velocity.X + SideVelocityInc);
+			}
+		}
+
+		private void Fall()
+		{
+			_standing = false;
+			_currentCollider = null;
+			_verticalAcceleration = Gravity;
+		}
+
+		private bool OverVoid()
+		{
+			return X > _currentCollider.X + Platform.Width || X - Width < _currentCollider.X;
 		}
 
 		public void Jump()
 		{
-			_velocity.Y = -JumpSize;
-			g = Gravity;
+			_velocity.Y = -JumpAcceleration;
+			_verticalAcceleration = Gravity;
 		}
 
 		public void MoveLeft()
 		{
-			_direction = -1;
-			// _velocity.X = Math.Max(-MaximumSideVelocity, _velocity.X - SideVelocityInc);
+			_direction = Direction.Left;
 		}
 		
 		public void MoveRight()
 		{
-			_direction = 1;
-			// _velocity.X = Math.Min(MaximumSideVelocity, _velocity.X + SideVelocityInc);
+			_direction = Direction.Right;
 		}
-		
-		
+
 		public void StopMovingLeft()
 		{
-			_direction = 0;
+			_direction = Direction.None;
 		}
 		
 		public void StopMovingRight()
 		{
-			_direction = 0;
+			StopMovingLeft();
 		}
 
-		public void NoMoveDown(Platform p)
+		public void StopFalling(Platform p)
 		{
 			if (_velocity.Y >= 0)
 			{
-				g = 0;
+				_verticalAcceleration = 0;
 				_velocity.Y = 0;
 
 				Y = p.Y - Height;
 
-				_currentlyColliding = true;
+				_standing = true;
 				_currentCollider = p;
 			}
 		}
