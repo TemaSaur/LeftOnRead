@@ -32,7 +32,7 @@ namespace LeftOnRead
 		}
 
 		public Box()
-		{
+		{// todo: if about to hit platform, change velocity accordingly 
 			X = 100;
 			Y = 100;
 			_velocity = new Vector(0, 0);
@@ -41,6 +41,7 @@ namespace LeftOnRead
 
 		public void UpdatePosition()
 		{
+			
 			X += (int)_velocity.X;
 			Y += (int)_velocity.Y;
 
